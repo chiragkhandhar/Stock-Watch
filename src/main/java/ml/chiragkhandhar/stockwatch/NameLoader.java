@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NameLoader extends AsyncTask<Void, Void, String>
 {
@@ -32,8 +33,7 @@ public class NameLoader extends AsyncTask<Void, Void, String>
     @Override
     protected void onPostExecute(String s)
     {
-        ArrayList<Stock>stockList = parseJSON(s);
-        Log.d(TAG, "onPostExecute: bp:  "+ stockList);
+        HashMap<String,String> stockList = parseJSON(s);
         if (stockList != null)
             Toast.makeText(mainActivity, "Loaded " + stockList.size() + " countries.", Toast.LENGTH_SHORT).show();
         mainActivity.updateData(stockList);
@@ -71,9 +71,9 @@ public class NameLoader extends AsyncTask<Void, Void, String>
         return sb.toString();
     }
 
-    private ArrayList<Stock> parseJSON(String s)
+    private HashMap<String,String> parseJSON(String s)
     {
-        ArrayList<Stock> stockList = new ArrayList<>();
+        HashMap<String,String> hashMap = new HashMap<String, String>();
         try
         {
             JSONArray jsonArray = new JSONArray(s);
@@ -82,9 +82,9 @@ public class NameLoader extends AsyncTask<Void, Void, String>
                 JSONObject jStock = (JSONObject) jsonArray.get(i);
                 String symbol = jStock.getString("symbol");
                 String name = jStock.getString("name");
-                stockList.add(new Stock(symbol, name));
+                hashMap.put(symbol,name);
             }
-            return stockList;
+            return hashMap;
         }
         catch (Exception e)
         {
