@@ -20,6 +20,9 @@ public class Stock implements Serializable
     {
         this.symbol = symbol;
         this.companyName = companyName;
+        this.latestPrice = 0;
+        this.change = 0;
+        this.changePercent = 0;
     }
 
     public Stock(String symbol, String companyName, float latestPrice, double change, double changePercent)

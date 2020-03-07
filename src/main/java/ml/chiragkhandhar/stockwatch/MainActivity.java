@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -19,6 +22,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -27,20 +33,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SwipeRefreshLayout swiper;
     private RecyclerView rv;
     private ArrayList<Stock>stocksArrayList= new ArrayList<>();
-    private HashMap<String,String> hashMap = new HashMap<String, String>();
+    private HashMap<String,String> hashMap = new HashMap<String, String>(); //Contains stocks to search from
     private StockAdapter stockAdapter;
     private String searchString;
     private static final String TAG = "MainActivity";
-
+    private DatabaseHandler dbh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setupComponents();
-
         swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
             @Override
@@ -50,21 +54,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 swiper.setRefreshing(false);
             }
         });
-
         stockAdapter = new StockAdapter(stocksArrayList, this);
         rv.setAdapter(stockAdapter);
         rv.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load the data
+        // Fetch the Stocks
         new NameLoader(this).execute();
+        dbh = new DatabaseHandler(this);
     }
 
+    @Override
+    protected void onResume()
+    {
+        ArrayList<Stock> tempList = dbh.loadStocks();
+        stocksArrayList.clear();
+        stocksArrayList.addAll(sortList(tempList));
+        stockAdapter.notifyDataSetChanged();
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        dbh.shutDown();
+        super.onDestroy();
+    }
 
 
     public void setupComponents()
     {
         swiper = findViewById(R.id.swiper);
         rv = findViewById(R.id.recycler);
+    }
+
+    ArrayList<Stock> sortList(ArrayList<Stock> temp)
+    {
+        Collections.sort(temp, new Comparator<Stock>() {
+            @Override
+            public int compare(Stock s1, Stock s2) {
+                return s1.getSymbol().compareTo(s2.getSymbol());
+            }
+        });
+
+        return temp;
+    }
+
+    public boolean networkChecker()
+    {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(cm == null)
+            return false;
+
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     public void updateData(HashMap<String,String> stockMap)
@@ -113,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     searchStock(searchString);
                 else
                 {
-                    Toast.makeText(MainActivity.this, "Seems, you've not entered anything!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.nullSearchStringMsg, Toast.LENGTH_SHORT).show();
                     addStock();
                 }
 
@@ -122,17 +165,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.setNegativeButton("NO WAY", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id)
             {
-                Toast.makeText(MainActivity.this, "You changed your mind!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.negativeBtn2, Toast.LENGTH_SHORT).show();
             }
         });
 
-        builder.setMessage("Please enter a Stock symbol: ");
-        builder.setTitle("Select Companies");
+        builder.setMessage(R.string.searchBoxMsg);
+        builder.setTitle(R.string.selectCompanies);
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
-
 
     }
 
@@ -141,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayList<Stock> tempList= new ArrayList<>();
         for(String key : hashMap.keySet())
         {
-            if(key.startsWith(searchString))
+            if(key.startsWith(searchString) || Objects.requireNonNull(hashMap.get(key)).contains(searchString))
             {
                 Stock temp = new Stock(key,hashMap.get(key));
                 tempList.add(temp);
@@ -154,23 +195,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (tempList.size() == 1)
         {
-            // Save to DB
+            if(checkDuplicate(tempList.get(0)))
+                saveDB(tempList.get(0));
         }
         else
         {
+            Toast.makeText(this, "No such stock found!", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "searchStock: bp: No Stock Found");
         }
     }
 
     public void multipleStock(final ArrayList<Stock> tempList)
     {
-
         final CharSequence[] sArray = new CharSequence[tempList.size()];
         for (int i = 0; i < tempList.size(); i++)
-            sArray[i] = tempList.get(i).getSymbol() + " | " + tempList.get(i).getCompanyName();
+            sArray[i] = tempList.get(i).getSymbol() + " | " + tempList.get(i).getCompanyName().toLowerCase();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Make a selection");
+        builder.setTitle(R.string.searchTitle);
         builder.setIcon(R.drawable.ic_search);
 
         builder.setItems(sArray, new DialogInterface.OnClickListener() {
@@ -179,11 +221,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Stock temp  = tempList.get(which);
                 Log.d(TAG, "onClick: bp: sArray["+which+"]: "+sArray[which]);
                 Log.d(TAG, "onClick: bp: temp: "+temp);
-                saveDB(temp);
+                if(checkDuplicate(temp))
+                    saveDB(temp);
             }
         });
 
-        builder.setNegativeButton("Nevermind", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.negativeBtn1, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 Toast.makeText(MainActivity.this, "You changed your mind!", Toast.LENGTH_SHORT).show();
             }
@@ -194,9 +237,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public boolean checkDuplicate(Stock s)
+    {
+        for (Stock temp: stocksArrayList)
+        {
+            if(temp.getSymbol().equals(s.getSymbol()))
+            {
+                Toast.makeText(this, s.getSymbol()+" is already added!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
+
+    }
+
     public void saveDB(Stock s)
     {
-
+        dbh.addStock(s);
+        stocksArrayList.add(s);
+        stocksArrayList = sortList(stocksArrayList);
+        stockAdapter.notifyDataSetChanged();
+        Log.d(TAG, "saveDB: bp: Saved " + s.getSymbol() + " to dB.");
     }
 
     @Override
@@ -224,7 +285,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialogInterface, int i)
             {
                 int pos = rv.getChildLayoutPosition(view);
+                dbh.deleteStock(stocksArrayList.get(pos));
                 stocksArrayList.remove(pos);
+                stocksArrayList = sortList(stocksArrayList);
                 stockAdapter.notifyDataSetChanged();
             }
         });

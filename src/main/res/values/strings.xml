@@ -3,4 +3,10 @@
     <string name="add_stock">Add Stock</string>
     <string name="delete_note1">Delete this Stock?</string>
     <string name="delete_note2">This action cannot be undone.</string>
+    <string name="negativeBtn1">Nevermind!</string>
+    <string name="searchTitle">Make a selection</string>
+    <string name="selectCompanies">Select Companies</string>
+    <string name="searchBoxMsg">\"Please enter a Stock symbol: \"</string>
+    <string name="nullSearchStringMsg">Seems, you\'ve not entered anything!</string>
+    <string name="negativeBtn2">You changed your mind!</string>
 </resources>
