@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,8 +59,6 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
             java.net.URL url = new URL(urlToUse);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            Log.d(TAG, "StockLoader: doInBackground: bp: ResponseCode: " + conn.getResponseCode());
-
             conn.setRequestMethod("GET");
             InputStream is = conn.getInputStream();
             BufferedReader reader = new BufferedReader((new InputStreamReader(is)));
@@ -90,9 +89,9 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
                 JSONObject jStock = new JSONObject(s);
                 String symbol = jStock.getString("symbol");
                 String companyName = jStock.getString("companyName");
-                double latestPrice = Double.parseDouble(jStock.getString("latestPrice"));
-                double  change = Double.parseDouble(jStock.getString("change"));
-                double changePercent = Double.parseDouble(jStock.getString("changePercent"));
+                double latestPrice = Math.round(Double.parseDouble(jStock.getString("latestPrice"))*100.00)/100.00;
+                double  change = Math.round(Double.parseDouble(jStock.getString("change"))*100.00)/100.00;
+                double changePercent = Math.round(Double.parseDouble(jStock.getString("changePercent"))*100.00)/100.00;
                 return new Stock(symbol,companyName,latestPrice,change,changePercent);
         }
         catch (Exception e)

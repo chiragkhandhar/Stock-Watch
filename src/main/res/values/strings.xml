@@ -9,4 +9,5 @@
     <string name="searchBoxMsg">\"Please enter a Stock symbol: \"</string>
     <string name="nullSearchStringMsg">Seems, you\'ve not entered anything!</string>
     <string name="negativeBtn2">You changed your mind!</string>
+    <string name="iconText">Icon</string>
 </resources>

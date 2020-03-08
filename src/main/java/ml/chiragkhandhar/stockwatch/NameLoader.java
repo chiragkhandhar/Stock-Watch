@@ -33,8 +33,8 @@ public class NameLoader extends AsyncTask<Void, Void, String>
     protected void onPostExecute(String s)
     {
         HashMap<String,String> stockList = parseJSON(s);
-        if (stockList != null)
-            Toast.makeText(mainActivity, "Loaded " + stockList.size() + " countries.", Toast.LENGTH_SHORT).show();
+//        if (stockList != null)
+//            Toast.makeText(mainActivity, "Loaded " + stockList.size() + " countries.", Toast.LENGTH_SHORT).show();
         mainActivity.updateData(stockList);
     }
 

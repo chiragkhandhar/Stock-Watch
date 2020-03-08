@@ -6,6 +6,7 @@ public class Stock implements Serializable
 {
     private String symbol, companyName;
     private double latestPrice, change, changePercent;
+    private  int COLOR_CODE;
 
     public Stock()
     {
@@ -14,6 +15,7 @@ public class Stock implements Serializable
         this.latestPrice = 0;
         this.change = 0;
         this.changePercent = 0;
+        this.COLOR_CODE = 0;
     }
 
     public Stock(String symbol, String companyName)
@@ -23,6 +25,7 @@ public class Stock implements Serializable
         this.latestPrice = 0;
         this.change = 0;
         this.changePercent = 0;
+        this.COLOR_CODE = decideColorCode();
     }
 
     public Stock(String symbol, String companyName, double latestPrice, double change, double changePercent)
@@ -32,6 +35,7 @@ public class Stock implements Serializable
         this.latestPrice = latestPrice;
         this.change = change;
         this.changePercent = changePercent;
+        this.COLOR_CODE = decideColorCode();
     }
 
     String getSymbol()
@@ -82,5 +86,19 @@ public class Stock implements Serializable
     public void setChangePercent(double changePercent)
     {
         this.changePercent = changePercent;
+    }
+
+    public int getCOLOR_CODE() {
+        return COLOR_CODE;
+    }
+
+    public int decideColorCode()
+    {
+        if (change > 0)
+            return 1;
+        else if (change < 0)
+            return 2;
+        else
+            return 3;
     }
 }

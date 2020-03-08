@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stocksArrayList.clear();
         stocksArrayList.addAll(sortList(tempList));
         stockAdapter.notifyDataSetChanged();
-//        getStockData();
+        getStockData();
         super.onResume();
     }
 
