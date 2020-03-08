@@ -25,7 +25,7 @@ public class Stock implements Serializable
         this.changePercent = 0;
     }
 
-    public Stock(String symbol, String companyName, float latestPrice, double change, double changePercent)
+    public Stock(String symbol, String companyName, double latestPrice, double change, double changePercent)
     {
         this.symbol = symbol;
         this.companyName = companyName;
@@ -34,27 +34,27 @@ public class Stock implements Serializable
         this.changePercent = changePercent;
     }
 
-    public String getSymbol()
+    String getSymbol()
     {
         return symbol;
     }
 
-    public void setSymbol(String symbol)
+    void setSymbol(String symbol)
     {
         this.symbol = symbol;
     }
 
-    public String getCompanyName()
+    String getCompanyName()
     {
         return companyName;
     }
 
-    public void setCompanyName(String companyName)
+    void setCompanyName(String companyName)
     {
         this.companyName = companyName;
     }
 
-    public double getLatestPrice()
+    double getLatestPrice()
     {
         return latestPrice;
     }
@@ -64,7 +64,7 @@ public class Stock implements Serializable
         this.latestPrice = latestPrice;
     }
 
-    public double getChange()
+    double getChange()
     {
         return change;
     }
@@ -74,7 +74,7 @@ public class Stock implements Serializable
         this.change = change;
     }
 
-    public double getChangePercent()
+    double getChangePercent()
     {
         return changePercent;
     }

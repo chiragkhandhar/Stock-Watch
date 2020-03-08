@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 {
     private SwipeRefreshLayout swiper;
     private RecyclerView rv;
-    private ArrayList<Stock>stocksArrayList= new ArrayList<>();
-    private HashMap<String,String> hashMap = new HashMap<String, String>(); //Contains stocks to search from
+    private ArrayList<Stock>stocksArrayList= new ArrayList<>();             // Contains stocks from Watchlist
+    private HashMap<String,String> hashMap = new HashMap<String, String>(); // Contains stocks to search from
     private StockAdapter stockAdapter;
     private String searchString;
     private static final String TAG = "MainActivity";
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onRefresh()
             {
                 Log.d(TAG, "onRefresh: bp:");
-                swiper.setRefreshing(false);
+                getStockData();
             }
         });
         stockAdapter = new StockAdapter(stocksArrayList, this);
@@ -61,6 +61,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Fetch the Stocks
         new NameLoader(this).execute();
         dbh = new DatabaseHandler(this);
+        getStockData();
+    }
+
+    public ArrayList<Stock> getStocksArrayList()
+    {
+        return stocksArrayList;
+    }
+
+    public void getStockData()
+    {
+        new StockLoader(this).execute();
+        swiper.setRefreshing(false);
     }
 
     @Override
@@ -70,7 +82,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stocksArrayList.clear();
         stocksArrayList.addAll(sortList(tempList));
         stockAdapter.notifyDataSetChanged();
+//        getStockData();
         super.onResume();
+    }
+
+    public void updateData(HashMap<String,String> stockMap)
+    {
+        hashMap.putAll(stockMap);
+    }
+
+    public void updateStockData(ArrayList<Stock> tempList)
+    {
+        stocksArrayList.clear();
+        stocksArrayList.addAll(sortList(tempList));
+        stockAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -110,10 +135,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    public void updateData(HashMap<String,String> stockMap)
-    {
-        hashMap.putAll(stockMap);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -256,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dbh.addStock(s);
         stocksArrayList.add(s);
         stocksArrayList = sortList(stocksArrayList);
+        getStockData();
         stockAdapter.notifyDataSetChanged();
         Log.d(TAG, "saveDB: bp: Saved " + s.getSymbol() + " to dB.");
     }
@@ -265,9 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         int position = rv.getChildAdapterPosition(view);
         Stock s = stocksArrayList.get(position);
-
         Toast.makeText(this, "Selected "+s.getSymbol()+" stock.",Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
