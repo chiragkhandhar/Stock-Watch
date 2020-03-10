@@ -96,7 +96,7 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
         }
         catch (Exception e)
         {
-            Log.d(TAG, "parseJSON: bp:" + e.getMessage());
+            Log.d(TAG, "parseJSON ERROR: bp:" + e.getMessage());
             e.printStackTrace();
         }
         return null;

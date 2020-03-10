@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -50,18 +49,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onRefresh()
             {
-                Log.d(TAG, "onRefresh: bp:");
-                getStockData();
+                if(networkChecker())
+                {
+                    getStockData();
+                    new NameLoader(MainActivity.this).execute();
+                }
+
+                else
+                {
+                    noNetworkDialog(getString(R.string.networkErrorMsg1));
+                    swiper.setRefreshing(false);
+                }
             }
         });
+
+        if(networkChecker())
+        {
+            new NameLoader(this).execute();
+            getStockData();
+
+        }
+        else
+            noNetworkDialog(getString(R.string.networkErrorMsg1));
+        dbh = new DatabaseHandler(this);
         stockAdapter = new StockAdapter(stocksArrayList, this);
         rv.setAdapter(stockAdapter);
         rv.setLayoutManager(new LinearLayoutManager(this));
-
-        // Fetch the Stocks
-        new NameLoader(this).execute();
-        dbh = new DatabaseHandler(this);
-        getStockData();
     }
 
     public ArrayList<Stock> getStocksArrayList()
@@ -82,7 +95,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stocksArrayList.clear();
         stocksArrayList.addAll(sortList(tempList));
         stockAdapter.notifyDataSetChanged();
-        getStockData();
+        if(networkChecker())
+            getStockData();
+        else
+            noNetworkDialog(getString(R.string.networkErrorMsg1));
         super.onResume();
     }
 
@@ -135,6 +151,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return networkInfo != null && networkInfo.isConnected();
     }
 
+    public void noNetworkDialog(String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setIcon(R.drawable.ic_error);
+        builder.setTitle(R.string.networkErrorTitle);
+        builder.setMessage(message);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void duplicateDialog(String symbol)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setIcon(R.drawable.ic_duplicate);
+        builder.setTitle(R.string.duplicateErrorTitle);
+        builder.setMessage(symbol + " is already added!");
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -149,7 +189,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId())
         {
             case R.id.addStock:
-                addStock();
+                if(networkChecker())
+                {
+                    new NameLoader(MainActivity.this).execute();
+                    addStock();
+                }
+                else
+                    noNetworkDialog(getString(R.string.networkErrorMsg2));
                 break;
             default:
                 Toast.makeText(this,"Invalid Option",Toast.LENGTH_SHORT).show();
@@ -264,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             if(temp.getSymbol().equals(s.getSymbol()))
             {
-                Toast.makeText(this, s.getSymbol()+" is already added!", Toast.LENGTH_SHORT).show();
+                duplicateDialog(s.getSymbol());
                 return false;
             }
         }
