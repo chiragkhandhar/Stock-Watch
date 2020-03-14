@@ -9,8 +9,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -175,6 +177,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
     }
 
+    public void noStockDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setIcon(R.drawable.ic_error);
+        builder.setTitle(R.string.noStockErrorTitle);
+        builder.setMessage("No such Stock Found");
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -241,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
 
     public void searchStock(String searchString)
@@ -267,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else
         {
-            Toast.makeText(this, "No such stock found!", Toast.LENGTH_SHORT).show();
+            noStockDialog();
             Log.d(TAG, "searchStock: bp: No Stock Found");
         }
     }
@@ -301,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog dialog = builder.create();
 
         dialog.show();
-
     }
 
     public boolean checkDuplicate(Stock s)
@@ -315,7 +326,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         return true;
-
     }
 
     public void saveDB(Stock s)
@@ -331,9 +341,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view)
     {
+        String URL = "http://www.marketwatch.com/investing/stock/";
+
         int position = rv.getChildAdapterPosition(view);
         Stock s = stocksArrayList.get(position);
-        Toast.makeText(this, "Selected "+s.getSymbol()+" stock.",Toast.LENGTH_SHORT).show();
+
+        URL = URL + s.getSymbol();
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(URL));
+        startActivity(i);
     }
 
     @Override

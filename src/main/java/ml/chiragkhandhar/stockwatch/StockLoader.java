@@ -84,14 +84,32 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
 
     private Stock parseJSON(String s)
     {
+        String companyName;
+        double latestPrice, change, changePercent;
         try
         {
                 JSONObject jStock = new JSONObject(s);
+                String tSymbol = jStock.getString("symbol");
+                String tCompanyName = jStock.getString("companyName");
+                String tLatestPrice = jStock.getString("latestPrice");
+                String tChange = jStock.getString("change");
+                String tChangePercent = jStock.getString("changePercent");
+
+                if(tCompanyName.length() == 0)
+                    tCompanyName = "";
+                if(tLatestPrice.length() == 0)
+                    tLatestPrice = "0";
+                if(tChange.length() == 0)
+                    tChange = "0";
+                if(tChangePercent.length() == 0)
+                    tChangePercent = "0";
+
                 String symbol = jStock.getString("symbol");
-                String companyName = jStock.getString("companyName");
-                double latestPrice = Math.round(Double.parseDouble(jStock.getString("latestPrice"))*100.00)/100.00;
-                double  change = Math.round(Double.parseDouble(jStock.getString("change"))*100.00)/100.00;
-                double changePercent = Math.round(Double.parseDouble(jStock.getString("changePercent"))*100.00)/100.00;
+                companyName = tCompanyName;
+                latestPrice = Math.round(Double.parseDouble(tLatestPrice)*100.00)/100.00;
+                change = Math.round(Double.parseDouble(tChange)*100.00)/100.00;
+                changePercent = Math.round(Double.parseDouble(tChangePercent)*100.00)/100.00;
+                Log.d(TAG, "parseJSON: bp: companyName: "+companyName + " latestPrice: "+ latestPrice + " change: "+change );
                 return new Stock(symbol,companyName,latestPrice,change,changePercent);
         }
         catch (Exception e)
