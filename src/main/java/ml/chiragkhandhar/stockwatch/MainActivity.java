@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             new NameLoader(this).execute();
             getStockData();
-
         }
         else
             noNetworkDialog(getString(R.string.networkErrorMsg1));
