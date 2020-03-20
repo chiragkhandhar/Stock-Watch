@@ -53,6 +53,17 @@ So here comes the “Stock Watch” 🎉.
 * The watchlisted stocks are locally stored, so once you uninstall / clear your app data, you will loose your shortlisted stocks.
 * Stock Watch is powered by [IEX Cloud](https://iexcloud.io/), thus the correctness of data is limited to the data provider.
 
+* IEX Cloud provides only 50000 API requests per free account. If the app is out of request you can follow the following steps to create your on token and replace in the source code in [StockLoader.java](src/main/java/ml/chiragkhandhar/stockwatch/StockLoader.java) file.
+  * Go to: [IEX Cloud Register](https://iexcloud.io/cloud-login#/register)
+  * Select "Individual"
+  * Enter your name, email address, and select a password.
+  * Click the terms checkbox and click "Create acount"
+  * Select the "START" plan (0/mo) - click Select Start
+  * Go to your email - look for message with Subject "IEX Cloud Email Verification"
+  * Click the iexcloud.io link in the email.
+  * From the page that link opens, click 'API Tokens" in the upper-left (under Home)
+ * Query Format: ```https://cloud.iexapis.com/stable/stock/STOCK_SYMBOL/quote?token=API_KEY```
+
 
 ## Disclaimer and Privacy statement:
 
