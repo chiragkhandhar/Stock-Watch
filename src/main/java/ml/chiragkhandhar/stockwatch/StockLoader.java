@@ -82,42 +82,110 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
         super.onPostExecute(tempList);
     }
 
-    private Stock parseJSON(String s)
+    private String getSymbolfromAPI(String s)
     {
-        String companyName;
-        double latestPrice, change, changePercent;
+        String symbol = "";
         try
         {
-                JSONObject jStock = new JSONObject(s);
-                String tSymbol = jStock.getString("symbol");
-                String tCompanyName = jStock.getString("companyName");
-                String tLatestPrice = jStock.getString("latestPrice");
-                String tChange = jStock.getString("change");
-                String tChangePercent = jStock.getString("changePercent");
-
-                if(tCompanyName.length() == 0)
-                    tCompanyName = "";
-                if(tLatestPrice.length() == 0)
-                    tLatestPrice = "0";
-                if(tChange.length() == 0)
-                    tChange = "0";
-                if(tChangePercent.length() == 0)
-                    tChangePercent = "0";
-
-                String symbol = jStock.getString("symbol");
-                companyName = tCompanyName;
-                latestPrice = Math.round(Double.parseDouble(tLatestPrice)*100.00)/100.00;
-                change = Math.round(Double.parseDouble(tChange)*100.00)/100.00;
-                changePercent = Math.round(Double.parseDouble(tChangePercent)*100.00)/100.00;
-                Log.d(TAG, "parseJSON: bp: companyName: "+companyName + " latestPrice: "+ latestPrice + " change: "+change );
-                return new Stock(symbol,companyName,latestPrice,change,changePercent);
+            JSONObject jStock = new JSONObject(s);
+            symbol = jStock.getString("symbol");
         }
         catch (Exception e)
         {
-            Log.d(TAG, "parseJSON ERROR: bp:" + e.getMessage());
+            Log.d(TAG, "ERROR| getSymbolfromAPI| bp:" + e.getMessage());
             e.printStackTrace();
         }
-        return null;
+
+        return symbol;
+    }
+
+    private String getCompanyNamefromAPI(String s)
+    {
+        String companyName = "";
+        try
+        {
+            JSONObject jStock = new JSONObject(s);
+            companyName = jStock.getString("companyName");
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "ERROR| getCompanyNamefromAPI| bp:" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return companyName;
+    }
+
+    private double getLatestPricefromAPI(String s)
+    {
+        double latestPrice = 0.00;
+        String tlatestPrice = "";
+        try
+        {
+            JSONObject jStock = new JSONObject(s);
+            tlatestPrice = jStock.getString("latestPrice");
+            latestPrice = Math.round(Double.parseDouble(tlatestPrice)*100.00)/100.00;
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "ERROR| getLatestPricefromAPI| bp:" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return latestPrice;
+    }
+
+    private double getChangefromAPI(String s)
+    {
+        double change = 0.00;
+        String tChange = "";
+        try
+        {
+            JSONObject jStock = new JSONObject(s);
+            tChange = jStock.getString("change");
+            change = Math.round(Double.parseDouble(tChange)*100.00)/100.00;
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "ERROR| getChangefromAPI| bp:" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return change;
+    }
+
+    private double getChangePercentfromAPI(String s)
+    {
+        double changePercent = 0.00;
+        String tChangePercent = "";
+        try
+        {
+            JSONObject jStock = new JSONObject(s);
+            tChangePercent = jStock.getString("changePercent");
+            changePercent = Math.round(Double.parseDouble(tChangePercent)*100.00)/100.00;
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "ERROR| getChangePercentfromAPI| bp:" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return changePercent;
+    }
+
+    private Stock parseJSON(String s)
+    {
+        String symbol = "", companyName = "";
+        double latestPrice = 0, change = 0, changePercent = 0;
+
+        symbol = getSymbolfromAPI(s);
+        companyName = getCompanyNamefromAPI(s);
+        latestPrice = getLatestPricefromAPI(s);
+        change = getChangefromAPI(s);
+        changePercent = getChangePercentfromAPI(s);
+        Log.d(TAG, "parseJSON: bp: companyName: "+companyName + " latestPrice: "+ latestPrice + " change: "+change );
+
+        return new Stock(symbol,companyName,latestPrice,change,changePercent);
     }
 
 }

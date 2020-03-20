@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     noNetworkDialog(getString(R.string.networkErrorMsg1));
                     swiper.setRefreshing(false);
                 }
+                Toast.makeText(MainActivity.this, "Refreshed", Toast.LENGTH_SHORT).show();
             }
         });
 
