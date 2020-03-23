@@ -14,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
@@ -222,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final EditText et = new EditText(this);
         et.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+        et.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
         et.setGravity(Gravity.CENTER_HORIZONTAL);
         builder.setView(et);
 
