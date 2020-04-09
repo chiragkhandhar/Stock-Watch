@@ -209,7 +209,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId())
         {
             case R.id.info:
-
+                Intent i = new Intent(this,AboutActivity.class);
+                startActivity(i);
                 break;
             default:
                 Toast.makeText(this,"Invalid Option",Toast.LENGTH_SHORT).show();
