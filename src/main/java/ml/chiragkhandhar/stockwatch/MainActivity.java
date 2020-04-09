@@ -24,6 +24,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,12 +36,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 {
     private SwipeRefreshLayout swiper;
     private RecyclerView rv;
-    private ArrayList<Stock>stocksArrayList= new ArrayList<>();             // Contains stocks from Watchlist
-    private HashMap<String,String> hashMap = new HashMap<String, String>(); // Contains stocks to search from
+    private ArrayList<Stock>stocksArrayList;             // Contains stocks from Watchlist
+    private HashMap<String,String> hashMap;              // Contains stocks to search from
     private StockAdapter stockAdapter;
     private String searchString;
     private static final String TAG = "MainActivity";
     private DatabaseHandler dbh;
+    private FloatingActionButton addBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -129,6 +132,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         swiper = findViewById(R.id.swiper);
         rv = findViewById(R.id.recycler);
+        addBtn = findViewById(R.id.addBtn);
+        hashMap = new HashMap<>();
+        stocksArrayList= new ArrayList<>();
     }
 
     ArrayList<Stock> sortList(ArrayList<Stock> temp)
@@ -202,19 +208,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         switch (item.getItemId())
         {
-            case R.id.addStock:
-                if(networkChecker())
-                {
-                    new NameLoader(MainActivity.this).execute();
-                    addStock();
-                }
-                else
-                    noNetworkDialog(getString(R.string.networkErrorMsg2));
+            case R.id.info:
+
                 break;
             default:
                 Toast.makeText(this,"Invalid Option",Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addBtnClick(View v)
+    {
+        if(networkChecker())
+        {
+            new NameLoader(MainActivity.this).execute();
+            addStock();
+        }
+        else
+            noNetworkDialog(getString(R.string.networkErrorMsg2));
     }
 
     public void addStock()
@@ -244,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-        builder.setNegativeButton("NO WAY", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id)
             {
                 Toast.makeText(MainActivity.this, R.string.negativeBtn2, Toast.LENGTH_SHORT).show();

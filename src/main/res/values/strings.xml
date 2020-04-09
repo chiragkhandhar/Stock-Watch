@@ -11,7 +11,7 @@
     <string name="negativeBtn2">You changed your mind!</string>
     <string name="iconText">Icon</string>
     <string name="networkErrorTitle">No Network Connection</string>
-    <string name="networkErrorMsg1">\"Stocks can not be loaded without a Network Connection \"</string>
+    <string name="networkErrorMsg1">Stocks can not be loaded without a Network Connection </string>
     <string name="networkErrorMsg2">Stocks can not be added without a Network Connection.</string>
     <string name="duplicateErrorTitle">Duplicate Stock</string>
     <string name="noStockErrorTitle">Stock not Found.</string>
