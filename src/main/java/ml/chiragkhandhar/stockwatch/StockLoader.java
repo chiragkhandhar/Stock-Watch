@@ -22,7 +22,8 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
     @SuppressLint("StaticFieldLeak")
     private MainActivity mainActivity;
     private static final String TAG = "StockLoader";
-    private static final String API_TOKEN = "sk_ddd06e00c8944e06975dd84945130a63";
+    // Add your API_KEY here
+    private static final String API_TOKEN = BuildConfig.API_KEY;
 
 
     public StockLoader(MainActivity mainActivity)
@@ -48,7 +49,7 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
         return tempList;
     }
 
-    public  String getStockDatafromURL(String URL)
+    private String getStockDatafromURL(String URL)
     {
         Uri dataUri = Uri.parse(URL);
         String urlToUse = dataUri.toString();
@@ -119,7 +120,7 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
     private double getLatestPricefromAPI(String s)
     {
         double latestPrice = 0.00;
-        String tlatestPrice = "";
+        String tlatestPrice ;
         try
         {
             JSONObject jStock = new JSONObject(s);
@@ -138,7 +139,7 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
     private double getChangefromAPI(String s)
     {
         double change = 0.00;
-        String tChange = "";
+        String tChange;
         try
         {
             JSONObject jStock = new JSONObject(s);
@@ -157,7 +158,7 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
     private double getChangePercentfromAPI(String s)
     {
         double changePercent = 0.00;
-        String tChangePercent = "";
+        String tChangePercent;
         try
         {
             JSONObject jStock = new JSONObject(s);
@@ -175,8 +176,8 @@ public class StockLoader extends AsyncTask<Void,Void,ArrayList<Stock>>
 
     private Stock parseJSON(String s)
     {
-        String symbol = "", companyName = "";
-        double latestPrice = 0, change = 0, changePercent = 0;
+        String symbol , companyName;
+        double latestPrice , change , changePercent;
 
         symbol = getSymbolfromAPI(s);
         companyName = getCompanyNamefromAPI(s);
