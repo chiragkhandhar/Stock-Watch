@@ -2,14 +2,11 @@ package ml.chiragkhandhar.stockwatch;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class StockAdapter extends  RecyclerView.Adapter<StockViewHolder>
@@ -18,7 +15,7 @@ public class StockAdapter extends  RecyclerView.Adapter<StockViewHolder>
     private List<Stock> stockList;
     private  MainActivity mainAct;
 
-    public StockAdapter(List<Stock> stockList, MainActivity mainAct)
+    StockAdapter(List<Stock> stockList, MainActivity mainAct)
     {
         this.stockList = stockList;
         this.mainAct = mainAct;
@@ -41,9 +38,9 @@ public class StockAdapter extends  RecyclerView.Adapter<StockViewHolder>
         Stock temp = stockList.get(position);
         holder.symbol.setText(temp.getSymbol());
         holder.companynName.setText(temp.getCompanyName());
-        holder.price.setText("$ "+temp.getLatestPrice());
-        holder.change.setText(""+temp.getChange());
-        holder.changePercent.setText("("+temp.getChangePercent()+" %)");
+        holder.price.setText(String.format("$ %s", temp.getLatestPrice()));
+        holder.change.setText(String.format("%s", temp.getChange()));
+        holder.changePercent.setText(String.format("(%s %%)", temp.getChangePercent()));
 
         int COLOR_CODE = temp.getCOLOR_CODE();
 

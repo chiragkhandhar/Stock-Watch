@@ -4,11 +4,8 @@ import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,7 +21,7 @@ public class NameLoader extends AsyncTask<Void, Void, String>
     private static final String DATA_URL = "https://api.iextrading.com/1.0/ref-data/symbols";
     private static final String TAG = "NameLoader";
 
-    public NameLoader(MainActivity mainActivity)
+    NameLoader(MainActivity mainActivity)
     {
         this.mainActivity = mainActivity;
     }
@@ -72,7 +69,7 @@ public class NameLoader extends AsyncTask<Void, Void, String>
 
     private HashMap<String,String> parseJSON(String s)
     {
-        HashMap<String,String> hashMap = new HashMap<String, String>();
+        HashMap<String,String> hashMap = new HashMap<>();
         try
         {
             JSONArray jsonArray = new JSONArray(s);
