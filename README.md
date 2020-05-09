@@ -14,6 +14,11 @@
   <a style="text-decoration:none">
     <img src="https://img.shields.io/badge/Platform-Android-brightgreen" alt="Platform" />
   </a>
+  
+   <a style="text-decoration:none" href = "https://github.com/chiragkhandhar/Stock-Watch/releases/download/1.1/Stock.Watch.apk">
+    <img src="https://img.shields.io/badge/Download-App-red" alt="Download App" />
+  </a>
+  
 </p>
 
 ## What is Stock Watch and why do I care?
